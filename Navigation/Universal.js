@@ -9,7 +9,7 @@ const Stack = createStackNavigator();
 const Universal = () => {
   return (
     <Stack.Navigator>
-        {false ?(
+        {true ?(
           <Stack.Screen name="RootNavigator" component={RootNavigator} options={{ headerShown: false }}/>
         ):(
           <Stack.Screen name="AuthStack" component={AuthStack} options={{ headerShown: false }}
