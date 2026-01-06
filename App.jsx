@@ -1,20 +1,33 @@
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider
-} from 'react-native-safe-area-context';
+import { StatusBar } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
+import { ThemeProvider, useAppTheme } from './src/Theme/ThemeContext';
+import Universal from './Navigation/Universal';
 
-import Universal from "./Navigation/Universal"
-
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+// Wrapper component to access theme inside NavigationContainer
+function AppContent() {
+  const { mode, theme } = useAppTheme();
 
   return (
+    <>
+      <StatusBar
+        barStyle={mode === 'light' ? 'dark-content' : 'light-content'}
+        backgroundColor="transparent"
+        translucent={true}
+      />
+      <NavigationContainer theme={theme}>
+        <Universal />
+      </NavigationContainer>
+    </>
+  );
+}
+
+function App() {
+  return (
     <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-        <NavigationContainer>
-          <Universal/>
-        </NavigationContainer>
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }
