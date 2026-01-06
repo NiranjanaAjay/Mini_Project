@@ -1,51 +1,79 @@
-import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from '@react-navigation/native';
 
-import Home from "../src/pages/MainTabs/Home";
-import Settings from "../src/pages/MainTabs/Settings";
-
+import Home from '../src/pages/MainTabs/Home';
+import DiseaseMatch from '../src/pages/MainTabs/DiseaseMatch.jsx';
+import DonorMatch from '../src/pages/MainTabs/DonorMatch';
+import Settings from '../src/pages/MainTabs/Settings';
 
 const Tab = createBottomTabNavigator();
+
 const MainTab = () => {
-     const { colors } = useTheme();
+  const { colors } = useTheme();
 
-    return(
-        <>
-        <Tab.Navigator
-            screenOptions = {({route}) => {
-                let iconName;
-                if (route.name === "Home") iconName = "home-outline";
-                else if (route.name === "Settings") iconName = "cog-outline";
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => {
+        let iconName;
+        let iconNameFocused;
 
-                return {
-                    tabBarIcon: ({ color, size }) => (
-                    <Icon name={iconName} size={size} color={color} />
-                    ),
-                   headerShown: false,
-                    tabBarStyle: {
-                        height: "6%",              
-                        backgroundColor: colors.background,
-                        position: 'absolute',      
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        elevation: 10,             
-                        shadowColor: colors.background,      
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: 0.3,
-                        shadowRadius: 4,
-                        zIndex: 10,          
-                    },
-                        tabBarSafeAreaInsets: { bottom: 8 },
-                        };
-                    }}
-                    initialRouteName = "Home"
-                >
-            <Tab.Screen name = "Home" component={Home} />
-            <Tab.Screen name = "Settings" component ={Settings} />
-        </Tab.Navigator>
-        </>
-    );
+        if (route.name === 'Home') {
+          iconName = 'home-outline';
+          iconNameFocused = 'home';
+        } else if (route.name === 'Disease Match') {
+          iconName = 'virus-outline';
+          iconNameFocused = 'virus';
+        } else if (route.name === 'Donor Match') {
+          iconName = 'heart-outline';
+          iconNameFocused = 'heart';
+        } else if (route.name === 'Settings') {
+          iconName = 'cog-outline';
+          iconNameFocused = 'cog';
+        }
+
+        return {
+          tabBarIcon: ({ color, focused }) => (
+            <Icon
+              name={focused ? iconNameFocused : iconName}
+              size={24}
+              color={color}
+            />
+          ),
+          headerShown: false,
+          tabBarActiveTintColor: colors.primary,
+          tabBarInactiveTintColor: colors.text + '80',
+          tabBarStyle: {
+            height: 70,
+            backgroundColor: colors.background,
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            elevation: 20,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: -4 },
+            shadowOpacity: 0.1,
+            shadowRadius: 12,
+            borderTopWidth: 0,
+            paddingTop: 8,
+            paddingBottom: 12,
+          },
+          tabBarLabelStyle: {
+            fontSize: 11,
+            fontWeight: '600',
+            marginTop: 2,
+          },
+        };
+      }}
+      initialRouteName="Home"
+    >
+      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Disease Match" component={DiseaseMatch} />
+      <Tab.Screen name="Donor Match" component={DonorMatch} />
+      <Tab.Screen name="Settings" component={Settings} />
+    </Tab.Navigator>
+  );
 };
+
 export default MainTab;
