@@ -114,12 +114,24 @@ export default function Home({ navigation }) {
           <View style={[styles.modalCard, { backgroundColor: colors.card }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>Add Data</Text>
 
-            <TouchableOpacity style={styles.modalOption}>
+            <TouchableOpacity
+              style={styles.modalOption}
+              onPress={() => {
+              setShowAddDataModal(false);
+                navigation.navigate('AddPatient');
+              }}
+            >
               <Icon name="account-plus" size={22} color={colors.primary} />
               <Text style={[styles.modalText, { color: colors.text }]}>Add Patient</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.modalOption}>
+            <TouchableOpacity
+              style={styles.modalOption}
+              onPress={() => {
+                setShowAddDataModal(false);
+                navigation.navigate('AddDonor');
+              }}
+            >
               <Icon name="heart-plus" size={22} color={colors.success} />
               <Text style={[styles.modalText, { color: colors.text }]}>Add Donor</Text>
             </TouchableOpacity>
