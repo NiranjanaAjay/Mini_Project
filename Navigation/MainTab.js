@@ -3,7 +3,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from '@react-navigation/native';
 
 import Home from '../src/pages/MainTabs/Home';
-import DiseaseMatch from '../src/pages/MainTabs/DiseaseMatch.jsx';
+import PatientProfiles from '../src/pages/MainTabs/PatientProfiles.jsx';
 import DonorProfiles from '../src/pages/MainTabs/DonorProfiles';
 import Settings from '../src/pages/MainTabs/Settings';
 
@@ -21,7 +21,7 @@ const MainTab = () => {
         if (route.name === 'Home') {
           iconName = 'home-outline';
           iconNameFocused = 'home';
-        } else if (route.name === 'Disease Match') {
+        } else if (route.name === 'Patient Profiles') {
           iconName = 'virus-outline';
           iconNameFocused = 'virus';
         } else if (route.name === 'Donor Profiles') {
@@ -69,7 +69,7 @@ const MainTab = () => {
       initialRouteName="Home"
     >
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Disease Match" component={DiseaseMatch} />
+      <Tab.Screen name="Patient Profiles" component={PatientProfiles} />
       <Tab.Screen name="Donor Profiles" component={DonorProfiles} />
       <Tab.Screen name="Settings" component={Settings} />
     </Tab.Navigator>
