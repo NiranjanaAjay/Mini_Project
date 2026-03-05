@@ -4,7 +4,7 @@ import { useTheme } from '@react-navigation/native';
 
 import Home from '../src/pages/MainTabs/Home';
 import DiseaseMatch from '../src/pages/MainTabs/DiseaseMatch.jsx';
-import DonorMatch from '../src/pages/MainTabs/DonorMatch';
+import DonorProfiles from '../src/pages/MainTabs/DonorProfiles';
 import Settings from '../src/pages/MainTabs/Settings';
 
 const Tab = createBottomTabNavigator();
@@ -24,7 +24,7 @@ const MainTab = () => {
         } else if (route.name === 'Disease Match') {
           iconName = 'virus-outline';
           iconNameFocused = 'virus';
-        } else if (route.name === 'Donor Match') {
+        } else if (route.name === 'Donor Profiles') {
           iconName = 'heart-outline';
           iconNameFocused = 'heart';
         } else if (route.name === 'Settings') {
@@ -70,7 +70,7 @@ const MainTab = () => {
     >
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Disease Match" component={DiseaseMatch} />
-      <Tab.Screen name="Donor Match" component={DonorMatch} />
+      <Tab.Screen name="Donor Profiles" component={DonorProfiles} />
       <Tab.Screen name="Settings" component={Settings} />
     </Tab.Navigator>
   );
