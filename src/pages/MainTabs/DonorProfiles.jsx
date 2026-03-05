@@ -49,6 +49,7 @@ export default function DonorProfiles({ navigation }) {
         styles.card,
         { backgroundColor: colors.card, borderColor: colors.border },
       ]}
+      onPress={() => navigation.navigate('DonorDetail', { donor })}
       activeOpacity={0.8}
     >
       <View style={styles.rowTop}>

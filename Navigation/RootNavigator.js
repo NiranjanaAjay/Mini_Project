@@ -3,6 +3,7 @@ import MainTab from "./MainTab.js";
 import AddDonor from "../src/pages/Forms/AddDonor.js";
 import AddPatient from "../src/pages/Forms/AddPatient.js";
 import DiseasePredict from "../src/pages/DiseasePredict.jsx"
+import DonorDetail from "../src/pages/DonorDetail.jsx";
 
 const Stack = createNativeStackNavigator();
 const RootNavigator = () => {
@@ -12,6 +13,7 @@ const RootNavigator = () => {
             <Stack.Screen name="AddPatient" component={AddPatient} />
             <Stack.Screen name="AddDonor" component={AddDonor} />
             <Stack.Screen name="DiseasePredict" component={DiseasePredict} />
+            <Stack.Screen name="DonorDetail" component={DonorDetail} />
         </Stack.Navigator>
     )
 }
