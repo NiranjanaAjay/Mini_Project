@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppTheme } from '../../Theme/ThemeContext';
+import { Dropdown } from 'react-native-element-dropdown';
 
 export default function AddDonor({ navigation }) {
   const { colors } = useAppTheme();
@@ -20,6 +21,77 @@ export default function AddDonor({ navigation }) {
   const [gender, setGender] = useState('');
   const [contact, setContact] = useState('');
   const [cmvStatus, setCmvStatus] = useState('');
+  const [hlaA, setHlaA] = useState('');
+  const [hlaB, setHlaB] = useState('');
+  const [hlaC, setHlaC] = useState('');
+  const [hlaDRB1, setHlaDRB1] = useState('');
+  const [hlaDQB1, setHlaDQB1] = useState('');
+
+  const hlaAOptions = [
+  { label: '01:01', value: '01:01' },
+  { label: '02:02', value: '02:01' },
+  { label: '03:01', value: '03:01' },
+  { label: '24:02', value: '24:02' },
+  { label: '11:01', value: '11:01' },
+  { label: '29:02', value: '29:02' },
+  { label: '31:01', value: '31:01' },
+  { label: '32:01', value: '32:01' },
+  { label: '68:01', value: '68:01' },
+  { label: '23:01', value: '23:01' },
+];
+
+const hlaBOptions = [
+  { label: '07:02', value: '07:02' },
+  { label: '08:01', value: '08:01' },
+  { label: '15:01', value: '15:01' },
+  { label: '44:02', value: '44:02' },
+  { label: '35:01', value: '35:01' },
+  { label: '51:01', value: '51:01' },
+  { label: '40:01', value: '40:01' },
+  { label: '18:01', value: '18:01' },
+  { label: '57:01', value: '57:01' },
+  { label: '44:03', value: '44:03' },
+];
+
+const hlaCOptions = [
+  { label: '07:01', value: '07:01' },
+  { label: '07:02', value: '07:02' },
+  { label: '04:01', value: '04:01' },
+  { label: '03:04', value: '03:04' },
+  { label: '06:02', value: '06:02' },
+  { label: '05:01', value: '05:01' },
+  { label: '12:03', value: '12:03' },
+  { label: '02:02', value: '02:02' },
+  { label: '08:02', value: '08:02' },
+  { label: '03:03', value: '03:03' },
+];
+
+const hlaDRB1Options = [
+  { label: '15:01', value: '15:01' },
+  { label: '07:01', value: '07:01' },
+  { label: '03:01', value: '03:01' },
+  { label: '13:01', value: '13:01' },
+  { label: '04:01', value: '04:01' },
+  { label: '01:01', value: '01:01' },
+  { label: '11:01', value: '11:01' },
+  { label: '04:04', value: '04:04' },
+  { label: '08:01', value: '08:01' },
+  { label: '12:01', value: '12:01' },
+];
+
+const hlaDQB1Options = [
+  { label: '06:02', value: '06:02' },
+  { label: '02:01', value: '02:01' },
+  { label: '03:01', value: '03:01' },
+  { label: '05:01', value: '05:01' },
+  { label: '03:02', value: '03:02' },
+  { label: '06:03', value: '06:03' },
+  { label: '04:02', value: '04:02' },
+  { label: '02:02', value: '02:02' },
+  { label: '05:02', value: '05:02' },
+  { label: '06:01', value: '06:01' },
+];
+
 
 
   const handleSubmit = async () => {
@@ -41,6 +113,11 @@ export default function AddDonor({ navigation }) {
           BloodGroup: bloodGroup,
           Contact: contact,
           CMVStatus: cmvStatus,
+          Hla_a: hlaA,
+          Hla_b: hlaB,
+          Hla_c: hlaC,
+          Hla_drb1: hlaDRB1,
+          Hla_dqb1: hlaDQB1,
         }),
       }
     );
@@ -134,6 +211,126 @@ export default function AddDonor({ navigation }) {
             style={[styles.input, { borderColor: colors.border, color: colors.text }]}
             onChangeText={setCmvStatus}
           />
+
+            <Dropdown
+              style={[styles.input, { borderColor: colors.border }]}
+              data={hlaAOptions}
+              labelField="label"
+              valueField="value"
+              placeholder="Select HLA_A allele 1"
+              value={hlaA}
+              onChange={item => setHlaA(item.value)}
+              placeholderStyle={{ color: colors.textSecondary }}
+              selectedTextStyle={{ color: colors.text }}
+            />
+
+             <Dropdown
+              style={[styles.input, { borderColor: colors.border }]}
+              data={hlaAOptions}
+              labelField="label"
+              valueField="value"
+              placeholder="Select HLA_A allele 2"
+              value={hlaA}
+              onChange={item => setHlaA(item.value)}
+              placeholderStyle={{ color: colors.textSecondary }}
+              selectedTextStyle={{ color: colors.text }}
+            />
+
+            <Dropdown
+              style={[styles.input, { borderColor: colors.border}]}
+              data={hlaBOptions}
+              labelField="label"
+              valueField="value"
+              placeholder="Select HLA_B allele 1"
+              value={hlaB}
+              onChange={item => setHlaB(item.value)}
+              placeholderStyle={{ color: colors.textSecondary }}
+              selectedTextStyle={{ color: colors.text }}
+            />
+
+            <Dropdown
+              style={[styles.input, { borderColor: colors.border}]}
+              data={hlaBOptions}
+              labelField="label"
+              valueField="value"
+              placeholder="Select HLA_B allele 2"
+              value={hlaB}
+              onChange={item => setHlaB(item.value)}
+              placeholderStyle={{ color: colors.textSecondary }}
+              selectedTextStyle={{ color: colors.text }}
+            />
+
+            <Dropdown
+              style={[styles.input, { borderColor: colors.border }]}
+              data={hlaCOptions}
+              labelField="label"
+              valueField="value"
+              placeholder="Select HLA_C allele 1"
+              value={hlaC}
+              onChange={item => setHlaC(item.value)}
+              placeholderStyle={{ color: colors.textSecondary }}
+              selectedTextStyle={{ color: colors.text }}
+            />
+
+            <Dropdown
+              style={[styles.input, { borderColor: colors.border }]}
+              data={hlaCOptions}
+              labelField="label"
+              valueField="value"
+              placeholder="Select HLA_C allele 2"
+              value={hlaC}
+              onChange={item => setHlaC(item.value)}
+              placeholderStyle={{ color: colors.textSecondary }}
+              selectedTextStyle={{ color: colors.text }}
+            />
+
+            <Dropdown
+              style={[styles.input, { borderColor: colors.border }]}
+              data={hlaDRB1Options}
+              labelField="label"
+              valueField="value"
+              placeholder="Select HLA_DRB1 allele 1"
+              value={hlaDRB1}
+              onChange={item => setHlaDRB1(item.value)}
+              placeholderStyle={{ color: colors.textSecondary }}
+              selectedTextStyle={{ color: colors.text }}
+            />
+
+            <Dropdown
+              style={[styles.input, { borderColor: colors.border }]}
+              data={hlaDRB1Options}
+              labelField="label"
+              valueField="value"
+              placeholder="Select HLA_DRB1 allele 2"
+              value={hlaDRB1}
+              onChange={item => setHlaDRB1(item.value)}
+              placeholderStyle={{ color: colors.textSecondary }}
+              selectedTextStyle={{ color: colors.text }}
+            />
+
+            <Dropdown
+              style={[styles.input, { borderColor: colors.border }]}
+              data={hlaDQB1Options}
+              labelField="label"
+              valueField="value"
+              placeholder="Select HLA_DQB1 allele 1"
+              value={hlaDQB1}
+              onChange={item => setHlaDQB1(item.value)}
+              placeholderStyle={{ color: colors.textSecondary }}
+              selectedTextStyle={{ color: colors.text }}
+            />
+
+            <Dropdown
+              style={[styles.input, { borderColor: colors.border }]}
+              data={hlaDQB1Options}
+              labelField="label"
+              valueField="value"
+              placeholder="Select HLA_DQB1 allele 2"
+              value={hlaDQB1}
+              onChange={item => setHlaDQB1(item.value)}
+              placeholderStyle={{ color: colors.textSecondary }}
+              selectedTextStyle={{ color: colors.text }}
+            />
 
           <TextInput
             placeholder="Contact"
