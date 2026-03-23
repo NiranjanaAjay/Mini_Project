@@ -49,7 +49,11 @@ export default function PatientProfiles({ navigation }) {
         styles.card,
         { backgroundColor: colors.card, borderColor: colors.border },
       ]}
-      onPress={() => navigation.navigate('PatientDetail', { patient })}
+      onPress={() => 
+        navigation.navigate('PatientDetail', {
+        patientId: patient.Patient_id
+        })
+      }
       activeOpacity={0.8}
     >
       <View style={styles.rowTop}>

@@ -43,6 +43,7 @@ export default function DonorProfiles({ navigation }) {
     }
   };
 
+  
   const DonorCard = ({ donor }) => (
     <TouchableOpacity
       style={[

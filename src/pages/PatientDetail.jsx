@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -11,56 +11,76 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppTheme } from '../../src/Theme/ThemeContext';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-
-const DetailCard = ({ label, value, colors, delay }) => {
-  const fade = useRef(new Animated.Value(0)).current;
-  const slide = useRef(new Animated.Value(20)).current;
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fade, { toValue: 1, duration: 400, delay, useNativeDriver: true }),
-      Animated.timing(slide, { toValue: 0, duration: 350, delay, useNativeDriver: true }),
-    ]).start();
-  }, []);
-
-  return (
-    <Animated.View
-      style={[
-        styles.card,
-        {
-          backgroundColor: colors.card,
-          borderColor: colors.border,
-          opacity: fade,
-          transform: [{ translateY: slide }],
-        },
-      ]}
-    >
-      <View style={{ flex: 1 }}>
-        <Text style={[styles.label, { color: colors.textSecondary }]}>{label}</Text>
-        <Text style={[styles.value, { color: colors.text }]}>
-          {value !== null && value !== undefined ? String(value) : '—'}
-        </Text>
-      </View>
-    </Animated.View>
-  );
-};
+const DetailCard = ({ label, value, colors }) => (
+  <View
+    style={[
+      styles.card,
+      { backgroundColor: colors.card, borderColor: colors.border },
+    ]}
+  >
+    <Text style={[styles.label, { color: colors.textSecondary }]}>
+      {label}
+    </Text>
+    <Text style={[styles.value, { color: colors.text }]}>
+      {value ?? '—'}
+    </Text>
+  </View>
+);
 
 export default function PatientDetail() {
   const { colors } = useAppTheme();
   const navigation = useNavigation();
   const route = useRoute();
-  const patient = route.params?.patient;
+  const patientId = route.params?.patientId;
+
+  const [patient, setPatient] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const headerFade = useRef(new Animated.Value(0)).current;
   const headerSlide = useRef(new Animated.Value(-12)).current;
 
   useEffect(() => {
+    fetchPatient();
     Animated.parallel([
       Animated.timing(headerFade, { toValue: 1, duration: 500, useNativeDriver: true }),
       Animated.timing(headerSlide, { toValue: 0, duration: 420, useNativeDriver: true }),
     ]).start();
   }, []);
 
+  const fetchPatient = async () => {
+  try {
+    const response = await fetch(
+      `https://uhpinfogzptzsvulhpvr.supabase.co/rest/v1/Patient?Patient_id=eq.${patientId}&select=*`,
+      {
+          headers: {
+            apikey:
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVocGluZm9nenB0enN2dWxocHZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyMjQyNjEsImV4cCI6MjA2OTgwMDI2MX0.PrVCuwG314G4x3YW-b3p1-xHDLjcLyLbxvh4fMt_UvE',
+            Authorization:
+              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVocGluZm9nenB0enN2dWxocHZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyMjQyNjEsImV4cCI6MjA2OTgwMDI2MX0.PrVCuwG314G4x3YW-b3p1-xHDLjcLyLbxvh4fMt_UvE',
+          },
+        }
+    );
+
+    const data = await response.json();
+
+    if (data.length > 0) {
+      setPatient(data[0]);
+    }
+
+    setLoading(false);
+  } catch (error) {
+    console.log(error);
+    setLoading(false);
+  }
+};
+
+  if (loading) {
+  return (
+    <View style={{ flex:1, justifyContent:'center', alignItems:'center' }}>
+      <Text>Loading...</Text>
+    </View>
+  );
+}
   if (!patient) return null;
 
   const initials = patient.Name
@@ -119,6 +139,13 @@ export default function PatientDetail() {
         </Text>
 
         {/* Cards */}
+        <View style={styles.cardsWrap}>
+          <DetailCard label="Age" value={patient.Age} colors={colors} />
+          <DetailCard label="Gender" value={patient.Gender} colors={colors} />
+          <DetailCard label="Blood Group" value={patient.BloodGroup} colors={colors} />
+          <DetailCard label="Body Mass" value={patient.BodyMass} colors={colors} />
+          <DetailCard label="CMV Status" value={patient.CMVStatus} colors={colors} />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
