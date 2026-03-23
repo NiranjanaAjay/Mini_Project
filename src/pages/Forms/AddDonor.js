@@ -21,11 +21,16 @@ export default function AddDonor({ navigation }) {
   const [gender, setGender] = useState('');
   const [contact, setContact] = useState('');
   const [cmvStatus, setCmvStatus] = useState('');
-  const [hlaA, setHlaA] = useState('');
-  const [hlaB, setHlaB] = useState('');
-  const [hlaC, setHlaC] = useState('');
-  const [hlaDRB1, setHlaDRB1] = useState('');
-  const [hlaDQB1, setHlaDQB1] = useState('');
+  const [hlaA_2, setHlaA_2] = useState('');
+  const [hlaA_1, setHlaA_1] = useState('');
+  const [hlaB_1, setHlaB_1] = useState('');
+  const [hlaB_2, setHlaB_2] = useState('');
+  const [hlaC_1, setHlaC_1] = useState('');
+  const [hlaC_2, setHlaC_2] = useState('');
+  const [hlaDRB1_1, setHlaDRB1_1] = useState('');
+  const [hlaDRB1_2, setHlaDRB1_2] = useState('');
+  const [hlaDQB1_1, setHlaDQB1_1] = useState('');
+  const [hlaDQB1_2, setHlaDQB1_2] = useState('');
 
   const hlaAOptions = [
   { label: '01:01', value: '01:01' },
@@ -113,11 +118,16 @@ const hlaDQB1Options = [
           BloodGroup: bloodGroup,
           Contact: contact,
           CMVStatus: cmvStatus,
-          Hla_a: hlaA,
-          Hla_b: hlaB,
-          Hla_c: hlaC,
-          Hla_drb1: hlaDRB1,
-          Hla_dqb1: hlaDQB1,
+          Hla_a_1: hlaA_1,
+          Hla_a_2: hlaA_2,
+          Hla_b_2: hlaB_2,
+          Hla_b_1: hlaB_1,
+          Hla_c_1: hlaC_1,
+          Hla_c_2: hlaC_2,
+          Hla_drb1_1: hlaDRB1_1,
+          Hla_drb1_2: hlaDRB1_2,
+          Hla_dqb1_1: hlaDQB1_1,
+          Hla_dqb1_2: hlaDQB1_2,
         }),
       }
     );
@@ -218,8 +228,8 @@ const hlaDQB1Options = [
               labelField="label"
               valueField="value"
               placeholder="Select HLA_A allele 1"
-              value={hlaA}
-              onChange={item => setHlaA(item.value)}
+              value={hlaA_1}
+              onChange={item => setHlaA_1(item.value)}
               placeholderStyle={{ color: colors.textSecondary }}
               selectedTextStyle={{ color: colors.text }}
             />
@@ -230,8 +240,8 @@ const hlaDQB1Options = [
               labelField="label"
               valueField="value"
               placeholder="Select HLA_A allele 2"
-              value={hlaA}
-              onChange={item => setHlaA(item.value)}
+              value={hlaA_2}
+              onChange={item => setHlaA_2(item.value)}
               placeholderStyle={{ color: colors.textSecondary }}
               selectedTextStyle={{ color: colors.text }}
             />
@@ -242,8 +252,8 @@ const hlaDQB1Options = [
               labelField="label"
               valueField="value"
               placeholder="Select HLA_B allele 1"
-              value={hlaB}
-              onChange={item => setHlaB(item.value)}
+              value={hlaB_1}
+              onChange={item => setHlaB_1(item.value)}
               placeholderStyle={{ color: colors.textSecondary }}
               selectedTextStyle={{ color: colors.text }}
             />
@@ -254,8 +264,8 @@ const hlaDQB1Options = [
               labelField="label"
               valueField="value"
               placeholder="Select HLA_B allele 2"
-              value={hlaB}
-              onChange={item => setHlaB(item.value)}
+              value={hlaB_2}
+              onChange={item => setHlaB_2(item.value)}
               placeholderStyle={{ color: colors.textSecondary }}
               selectedTextStyle={{ color: colors.text }}
             />
@@ -266,8 +276,8 @@ const hlaDQB1Options = [
               labelField="label"
               valueField="value"
               placeholder="Select HLA_C allele 1"
-              value={hlaC}
-              onChange={item => setHlaC(item.value)}
+              value={hlaC_1}
+              onChange={item => setHlaC_1(item.value)}
               placeholderStyle={{ color: colors.textSecondary }}
               selectedTextStyle={{ color: colors.text }}
             />
@@ -278,8 +288,8 @@ const hlaDQB1Options = [
               labelField="label"
               valueField="value"
               placeholder="Select HLA_C allele 2"
-              value={hlaC}
-              onChange={item => setHlaC(item.value)}
+              value={hlaC_2}
+              onChange={item => setHlaC_2(item.value)}
               placeholderStyle={{ color: colors.textSecondary }}
               selectedTextStyle={{ color: colors.text }}
             />
@@ -290,8 +300,8 @@ const hlaDQB1Options = [
               labelField="label"
               valueField="value"
               placeholder="Select HLA_DRB1 allele 1"
-              value={hlaDRB1}
-              onChange={item => setHlaDRB1(item.value)}
+              value={hlaDRB1_1}
+              onChange={item => setHlaDRB1_1(item.value)}
               placeholderStyle={{ color: colors.textSecondary }}
               selectedTextStyle={{ color: colors.text }}
             />
@@ -302,8 +312,8 @@ const hlaDQB1Options = [
               labelField="label"
               valueField="value"
               placeholder="Select HLA_DRB1 allele 2"
-              value={hlaDRB1}
-              onChange={item => setHlaDRB1(item.value)}
+              value={hlaDRB1_2}
+              onChange={item => setHlaDRB1_2(item.value)}
               placeholderStyle={{ color: colors.textSecondary }}
               selectedTextStyle={{ color: colors.text }}
             />
@@ -314,8 +324,8 @@ const hlaDQB1Options = [
               labelField="label"
               valueField="value"
               placeholder="Select HLA_DQB1 allele 1"
-              value={hlaDQB1}
-              onChange={item => setHlaDQB1(item.value)}
+              value={hlaDQB1_1}
+              onChange={item => setHlaDQB1_1(item.value)}
               placeholderStyle={{ color: colors.textSecondary }}
               selectedTextStyle={{ color: colors.text }}
             />
@@ -326,8 +336,8 @@ const hlaDQB1Options = [
               labelField="label"
               valueField="value"
               placeholder="Select HLA_DQB1 allele 2"
-              value={hlaDQB1}
-              onChange={item => setHlaDQB1(item.value)}
+              value={hlaDQB1_2}
+              onChange={item => setHlaDQB1_2(item.value)}
               placeholderStyle={{ color: colors.textSecondary }}
               selectedTextStyle={{ color: colors.text }}
             />
