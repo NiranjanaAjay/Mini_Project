@@ -1,0 +1,443 @@
+import React, { useEffect, useState, useRef } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Animated,
+  Alert,
+  TextInput,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAppTheme } from '../../src/Theme/ThemeContext';
+import { useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { Dropdown } from 'react-native-element-dropdown';
+
+const API_URL = 'https://uhpinfogzptzsvulhpvr.supabase.co/rest/v1';
+const API_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVocGluZm9nenB0enN2dWxocHZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyMjQyNjEsImV4cCI6MjA2OTgwMDI2MX0.PrVCuwG314G4x3YW-b3p1-xHDLjcLyLbxvh4fMt_UvE';
+
+const HEADERS = {
+  apikey: API_KEY,
+  Authorization: `Bearer ${API_KEY}`,
+  'Content-Type': 'application/json',
+};
+
+const FIELD_META = {
+  Name:       {label: 'FULL NAME' },
+  Age:        {label: 'AGE' },
+  Gender:     { label: 'GENDER' },
+  BloodGroup: {label: 'BLOOD GROUP' },
+  BodyMass:   {label: 'BODY MASS (kg)' },
+  RhFactor:   {label: 'RH FACTOR' },
+  CMVStatus:  {label: 'CMV STATUS' },
+  Contact:    {label: 'CONTACT' },
+};
+
+const HLA_FIELD_META = [
+  { key1: 'Hla_a_1',    key2: 'Hla_a_2',    label: 'HLA-A' },
+  { key1: 'Hla_b_1',    key2: 'Hla_b_2',    label: 'HLA-B' },
+  { key1: 'Hla_c_1',    key2: 'Hla_c_2',    label: 'HLA-C' },
+  { key1: 'Hla_drb1_1', key2: 'Hla_drb1_2', label: 'HLA-DRB1' },
+  { key1: 'Hla_dqb1_1', key2: 'Hla_dqb1_2', label: 'HLA-DQB1' },
+];
+
+const RISK_GROUP_OPTIONS = [
+  { label: 'Low',    value: 'low' },
+  { label: 'Medium', value: 'medium' },
+  { label: 'High',   value: 'high' },
+];
+
+const POST_RELAPSE_OPTIONS = [
+  { label: 'Yes', value: 'yes' },
+  { label: 'No',  value: 'no' },
+];
+
+// ─── Detail Card ────────────────────────────────────────────────────────────
+const DetailCard = ({ label, value, colors, delay }) => {
+  const fadeAnim  = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(18)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim,  { toValue: 1, duration: 400, delay, useNativeDriver: true }),
+      Animated.timing(slideAnim, { toValue: 0, duration: 350, delay, useNativeDriver: true }),
+    ]).start();
+  }, []);
+
+  return (
+    <Animated.View
+      style={[
+        styles.detailCard,
+        {
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }],
+        },
+      ]}
+    >
+      <View style={styles.detailTextGroup}>
+        <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>{label}</Text>
+        <Text style={[styles.detailValue, { color: colors.text }]}>{value || '—'}</Text>
+      </View>
+    </Animated.View>
+  );
+};
+
+// ─── HLA Row ─────────────────────────────────────────────────────────────────
+const HlaRow = ({ label, val1, val2, colors }) => (
+  <View style={[styles.hlaRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
+    <Text style={[styles.hlaLabel, { color: colors.textSecondary }]}>{label}</Text>
+    <View style={styles.hlaValues}>
+      <View style={[styles.hlaPill, { backgroundColor: colors.primary + '14', borderColor: colors.primary + '30' }]}>
+        <Text style={[styles.hlaPillText, { color: colors.text }]}>{val1 || '—'}</Text>
+      </View>
+      <View style={[styles.hlaSep, { backgroundColor: colors.border }]} />
+      <View style={[styles.hlaPill, { backgroundColor: colors.primary + '14', borderColor: colors.primary + '30' }]}>
+        <Text style={[styles.hlaPillText, { color: colors.text }]}>{val2 || '—'}</Text>
+      </View>
+    </View>
+  </View>
+);
+
+// ─── Section Label ───────────────────────────────────────────────────────────
+const SectionLabel = ({ text, colors }) => (
+  <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>{text}</Text>
+);
+
+// ─── Divider ─────────────────────────────────────────────────────────────────
+const Divider = ({ colors }) => (
+  <View style={[styles.divider, { backgroundColor: colors.border }]} />
+);
+
+// ─── Main Screen ─────────────────────────────────────────────────────────────
+export default function DonorPredict() {
+  const { colors }   = useAppTheme();
+  const navigation   = useNavigation();
+  const patient      = useSelector(state => state.patient.selectedPatient);
+  const isEmpty = (val) => val === null || val === undefined || val === '';
+
+  const [diseaseType,  setDiseaseType]  = useState('');
+  const [diseaseGroup, setDiseaseGroup] = useState('');
+  const [riskGroup,    setRiskGroup]    = useState('');
+  const [postRelapse,  setPostRelapse]  = useState('');
+  const [loading,      setLoading]      = useState(false);
+
+  useEffect(() => {
+  setDiseaseType(patient.DiseaseType || '');
+  setDiseaseGroup(patient.DiseaseGroup || '');
+  setRiskGroup(patient.RiskGroup || '');
+  setPostRelapse(patient.PostRelapse || '');
+}, [patient]);
+
+  // ── No patient guard ──────────────────────────────────────────────────────
+  if (!patient) {
+    return (
+      <SafeAreaView style={[styles.emptyContainer, { backgroundColor: colors.background }]}>
+        <Text style={styles.emptyIcon}>🔍</Text>
+        <Text style={[styles.emptyTitle, { color: colors.text }]}>No Patient Selected</Text>
+        <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
+          Please go back and select a patient first.
+        </Text>
+        <TouchableOpacity
+          style={[styles.emptyBackBtn, { backgroundColor: colors.primary }]}
+          onPress={() => navigation.goBack()}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.emptyBackBtnText}>← Go Back</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
+
+  // ── Submit ────────────────────────────────────────────────────────────────
+  const handleSubmit = async () => {
+    if (isEmpty(patient.DiseaseType) && !diseaseType.trim()) {
+      Alert.alert('Missing Field', 'Please enter Disease Type.');
+      return;
+    }
+    if (isEmpty(patient.DiseaseGroup) && !diseaseGroup.trim() ) {
+      Alert.alert('Missing Field', 'Please enter Disease Group.');
+      return;
+    }
+    if (isEmpty(patient.riskGroup) && !riskGroup) {
+      Alert.alert('Missing Field', 'Please select a Risk Group.');
+      return;
+    }
+    if (isEmpty(patient.postRelapse) && !postRelapse) {
+      Alert.alert('Missing Field', 'Please select Post Relapse status.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `${API_URL}/Patient?Patient_id=eq.${patient.Patient_id}`,
+        {
+          method: 'PATCH',
+          headers: { ...HEADERS, Prefer: 'return=minimal' },
+          body: JSON.stringify({
+            DiseaseType:  diseaseType.trim(),
+            DiseaseGroup: diseaseGroup.trim(),
+            RiskGroup:    riskGroup,
+            PostRelapse:  postRelapse,
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        const err = await res.text();
+        console.error('PATCH error:', err);
+        Alert.alert('Error', 'Failed to update patient record.');
+        return;
+      }
+
+      Alert.alert('Saved', 'Patient record updated successfully.', [
+        { text: 'OK', onPress: () => navigation.navigate('MainTabs') },
+      ]);
+    } catch (err) {
+      console.error(err);
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Derived data ─────────────────────────────────────────────────────────
+  const fields = Object.entries(FIELD_META).map(([key, meta], i) => ({
+    ...meta, value: patient[key], key, delay: 80 + i * 55,
+  }));
+
+  return (
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+      edges={['top']}
+    >
+      {/* Top Navigation Bar */}
+      <View style={[styles.topBar, { borderBottomColor: colors.border }]}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={[styles.backBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
+          activeOpacity={0.7}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Text style={[styles.backArrow, { color: colors.text }]}>‹</Text>
+        </TouchableOpacity>
+        <Text style={[styles.topBarTitle, { color: colors.text }]}>Patient Profile</Text>
+        <View style={{ width: 40 }} />
+      </View>
+
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* ── Personal Details ─────────────────────────────────────── */}
+        <SectionLabel text="PERSONAL DETAILS" colors={colors} />
+        <View style={styles.cardsWrap}>
+          {fields.map(f => (
+            <DetailCard
+              key={f.key}
+              label={f.label}
+              value={f.value}
+              colors={colors}
+              delay={f.delay}
+            />
+          ))}
+        </View>
+
+        {/* ── HLA Typing ───────────────────────────────────────────── */}
+        <SectionLabel text="HLA TYPING" colors={colors} />
+        <View style={styles.cardsWrap}>
+          {HLA_FIELD_META.map(({ key1, key2, label }) => (
+            <HlaRow
+              key={label}
+              label={label}
+              val1={patient[key1]}
+              val2={patient[key2]}
+              colors={colors}
+            />
+          ))}
+        </View>
+
+        <Divider colors={colors} />
+
+        {/* ── Clinical Assessment ──────────────────────────────────── */}
+        <SectionLabel text="CLINICAL ASSESSMENT" colors={colors} />
+
+        <View style={[styles.inputCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+
+        {/* Disease Type */}
+        <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>DISEASE TYPE</Text>
+        {isEmpty(patient.DiseaseType) ? (
+            <TextInput
+            placeholder="e.g. Leukemia, Lymphoma..."
+            placeholderTextColor={colors.textSecondary}
+            style={[styles.input, { borderColor: colors.border, color: colors.text }]}
+            value={diseaseType}
+            onChangeText={setDiseaseType}
+            />
+        ) : (
+            <Text style={[styles.detailValue, { color: colors.text, marginBottom: 20 }]}>
+            {patient.DiseaseType}
+            </Text>
+        )}
+
+        {/* Disease Group */}
+        <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>DISEASE GROUP</Text>
+        {isEmpty(patient.DiseaseGroup) ? (
+            <TextInput
+            placeholder="e.g. Malignant, Non-malignant..."
+            placeholderTextColor={colors.textSecondary}
+            style={[styles.input, { borderColor: colors.border, color: colors.text }]}
+            value={diseaseGroup}
+            onChangeText={setDiseaseGroup}
+            />
+        ) : (
+            <Text style={[styles.detailValue, { color: colors.text, marginBottom: 20 }]}>
+            {patient.DiseaseGroup}
+            </Text>
+        )}
+
+        {/* Risk Group */}
+        <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>RISK GROUP</Text>
+        {isEmpty(patient.RiskGroup) ? (
+            <Dropdown
+            style={[styles.input, { borderColor: colors.border }]}
+            data={RISK_GROUP_OPTIONS}
+            labelField="label"
+            valueField="value"
+            placeholder="Select risk level"
+            value={riskGroup}
+            onChange={item => setRiskGroup(item.value)}
+            placeholderStyle={{ color: colors.textSecondary }}
+            selectedTextStyle={{ color: colors.text }}
+            />
+        ) : (
+            <Text style={[styles.detailValue, { color: colors.text, marginBottom: 20 }]}>
+            {patient.RiskGroup}
+            </Text>
+        )}
+
+        {/* Post Relapse */}
+        <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>POST RELAPSE</Text>
+        {isEmpty(patient.PostRelapse) ? (
+            <Dropdown
+            style={[styles.input, { borderColor: colors.border, marginBottom: 4 }]}
+            data={POST_RELAPSE_OPTIONS}
+            labelField="label"
+            valueField="value"
+            placeholder="Select status"
+            value={postRelapse}
+            onChange={item => setPostRelapse(item.value)}
+            placeholderStyle={{ color: colors.textSecondary }}
+            selectedTextStyle={{ color: colors.text }}
+            />
+        ) : (
+            <Text style={[styles.detailValue, { color: colors.text }]}>
+            {patient.PostRelapse}
+            </Text>
+        )}
+
+        </View>
+
+        {/* Submit */}
+        <TouchableOpacity
+          style={[
+            styles.submitBtn,
+            { backgroundColor: loading ? colors.primary + '88' : colors.primary },
+          ]}
+          onPress={handleSubmit}
+          activeOpacity={0.8}
+          disabled={loading}
+        >
+          <Text style={styles.submitText}>
+            {loading ? 'Saving...' : 'Save & Continue'}
+          </Text>
+        </TouchableOpacity>
+
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container:      { flex: 1 },
+
+  emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 36 },
+  emptyTitle:     { fontSize: 20, fontWeight: '700', marginBottom: 8 },
+  emptySubtitle:  { fontSize: 14, textAlign: 'center', lineHeight: 20, marginBottom: 28 },
+  emptyBackBtn:   { paddingHorizontal: 28, paddingVertical: 13, borderRadius: 50 },
+  emptyBackBtnText: { color: '#fff', fontWeight: '600', fontSize: 15 },
+
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  backBtn: {
+    width: 40, height: 40, borderRadius: 20,
+    borderWidth: 1, alignItems: 'center', justifyContent: 'center',
+  },
+  backArrow:    { fontSize: 28, lineHeight: 34, marginTop: -2, fontWeight: '300' },
+  topBarTitle:  { fontSize: 16, fontWeight: '600', letterSpacing: 0.3 },
+
+  scrollContent: { paddingBottom: 52 },
+
+  sectionLabel: {
+    fontSize: 11, fontWeight: '700', letterSpacing: 1.3,
+    marginHorizontal: 20, marginBottom: 12, marginTop: 24,
+  },
+
+  cardsWrap:  { paddingHorizontal: 16, gap: 10, marginBottom: 8 },
+
+  detailCard: {
+    flexDirection: 'row', alignItems: 'center',
+    borderWidth: StyleSheet.hairlineWidth, borderRadius: 16,
+    padding: 14, gap: 14,
+  },
+  iconBadge:       { width: 46, height: 46, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
+  iconText:        { fontSize: 21 },
+  detailTextGroup: { flex: 1 },
+  detailLabel:     { fontSize: 10, fontWeight: '700', letterSpacing: 1, marginBottom: 4 },
+  detailValue:     { fontSize: 16, fontWeight: '600' },
+
+  // HLA
+  hlaRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    borderWidth: StyleSheet.hairlineWidth, borderRadius: 16,
+    paddingHorizontal: 16, paddingVertical: 12,
+  },
+  hlaLabel:    { fontSize: 13, fontWeight: '600', letterSpacing: 0.3, flex: 1 },
+  hlaValues:   { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  hlaPill:     { paddingHorizontal: 12, paddingVertical: 5, borderRadius: 8, borderWidth: 1 },
+  hlaPillText: { fontSize: 13, fontWeight: '600' },
+  hlaSep:      { width: StyleSheet.hairlineWidth, height: 20 },
+
+  divider: { height: StyleSheet.hairlineWidth, marginHorizontal: 20, marginTop: 24 },
+
+  // Input card
+  inputCard: {
+    marginHorizontal: 16, borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 20, padding: 20, marginBottom: 8,
+  },
+  inputLabel: {
+    fontSize: 10, fontWeight: '700', letterSpacing: 1.2, marginBottom: 8,
+  },
+  input: {
+    borderWidth: 1, borderRadius: 14,
+    paddingHorizontal: 14, paddingVertical: 13,
+    marginBottom: 20, fontSize: 15,
+  },
+
+  submitBtn: {
+    padding: 17, borderRadius: 16,
+    alignItems: 'center', marginTop: 8, marginHorizontal: 16,
+  },
+  submitText: { color: '#fff', fontWeight: '700', fontSize: 16 },
+});

@@ -3,6 +3,7 @@ import MainTab from "./MainTab.js";
 import AddDonor from "../src/pages/Forms/AddDonor.js";
 import AddPatient from "../src/pages/Forms/AddPatient.js";
 import DiseasePredict from "../src/pages/DiseasePredict.jsx"
+import DonorPredict from "../src/pages/DonorPredict.jsx"
 import DonorDetail from "../src/pages/DonorDetail.jsx";
 import PatientDetail from "../src/pages/PatientDetail.jsx";
 
@@ -13,6 +14,7 @@ const RootNavigator = () => {
             <Stack.Screen name = "MainTabs" component = {MainTab}/>
             <Stack.Screen name="AddPatient" component={AddPatient} />
             <Stack.Screen name="AddDonor" component={AddDonor} />
+            <Stack.Screen name="DonorPredict" component={DonorPredict} />
             <Stack.Screen name="DiseasePredict" component={DiseasePredict} />
             <Stack.Screen name="DonorDetail" component={DonorDetail} />
             <Stack.Screen name="PatientDetail" component={PatientDetail} />

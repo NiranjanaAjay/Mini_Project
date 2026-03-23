@@ -102,6 +102,10 @@ export default function AddPatient({ navigation }) {
   
 
  const handleSubmit = async () => {
+    if (!name || !bloodGroup || !age || !gender || !bodyMass || !rhFactor || !cmvStatus) {
+    Alert.alert("Missing Fields", "Please fill all mandatory fields");
+    return;
+  }
   try {
     const response = await fetch(
       'https://uhpinfogzptzsvulhpvr.supabase.co/rest/v1/Patient',
@@ -181,7 +185,7 @@ export default function AddPatient({ navigation }) {
         >
 
           <TextInput
-            placeholder="Name"
+            placeholder="Name  *"
             placeholderTextColor={colors.textSecondary}
             style={[
               styles.input,
@@ -191,7 +195,7 @@ export default function AddPatient({ navigation }) {
           />
 
           <TextInput
-            placeholder="Blood Group"
+            placeholder="Blood Group  *"
             placeholderTextColor={colors.textSecondary}
             style={[
               styles.input,
@@ -201,7 +205,7 @@ export default function AddPatient({ navigation }) {
           />
 
           <TextInput
-            placeholder="Age"
+            placeholder="Age  *"
             placeholderTextColor={colors.textSecondary}
             keyboardType="numeric"
             style={[
@@ -212,7 +216,7 @@ export default function AddPatient({ navigation }) {
           />
 
           <TextInput
-            placeholder="Gender"
+            placeholder="Gender  *"
             placeholderTextColor={colors.textSecondary}
             style={[
               styles.input,
@@ -230,14 +234,14 @@ export default function AddPatient({ navigation }) {
           />
 
           <TextInput
-            placeholder="Rh Factor (plus/minus)"
+            placeholder="Rh Factor (plus/minus)  *"
             placeholderTextColor={colors.textSecondary}
             style={[styles.input, { borderColor: colors.border, color: colors.text }]}
             onChangeText={setRhFactor}
           />
 
           <TextInput
-            placeholder="CMV Status (present/absent)"
+            placeholder="CMV Status (present/absent)  *"
             placeholderTextColor={colors.textSecondary}
             style={[styles.input, { borderColor: colors.border, color: colors.text }]}
             onChangeText={setCmvStatus}

@@ -73,7 +73,7 @@ const DonorMatch = ({
 
     setPatientName('');
     onClose();
-    navigation.navigate('DiseasePredict');
+    navigation.navigate('DonorPredict');
 
   } catch (error) {
     console.error("FULL ERROR:", error);

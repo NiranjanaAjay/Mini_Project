@@ -101,6 +101,10 @@ const hlaDQB1Options = [
 
   const handleSubmit = async () => {
   try {
+      if (!name || !bloodGroup || !age || !gender || !cmvStatus) {
+    Alert.alert("Missing Fields", "Please fill all mandatory fields");
+    return;
+  }
     const response = await fetch(
       'https://uhpinfogzptzsvulhpvr.supabase.co/rest/v1/Donor',
       {
@@ -174,18 +178,9 @@ const hlaDQB1Options = [
             { backgroundColor: colors.card, borderColor: colors.border },
           ]}
         >
-          <TextInput
-            placeholder="Blood Group"
-            placeholderTextColor={colors.textSecondary}
-            style={[
-              styles.input,
-              { borderColor: colors.border, color: colors.text },
-            ]}
-            onChangeText={setBloodGroup}
-          />
 
           <TextInput
-            placeholder="Name"
+            placeholder="Name  *"
             placeholderTextColor={colors.textSecondary}
             style={[
               styles.input,
@@ -195,7 +190,17 @@ const hlaDQB1Options = [
           />
 
           <TextInput
-            placeholder="Age"
+            placeholder="Blood Group  *"
+            placeholderTextColor={colors.textSecondary}
+            style={[
+              styles.input,
+              { borderColor: colors.border, color: colors.text },
+            ]}
+            onChangeText={setBloodGroup}
+          />
+
+          <TextInput
+            placeholder="Age  *"
             placeholderTextColor={colors.textSecondary}
             keyboardType="numeric"
             style={[
@@ -206,7 +211,7 @@ const hlaDQB1Options = [
           />
 
           <TextInput
-            placeholder="Gender"
+            placeholder="Gender  *"
             placeholderTextColor={colors.textSecondary}
             style={[
               styles.input,
@@ -216,7 +221,7 @@ const hlaDQB1Options = [
           />
 
           <TextInput
-            placeholder="CMV Status (present/absent)"
+            placeholder="CMV Status (present/absent)  *"
             placeholderTextColor={colors.textSecondary}
             style={[styles.input, { borderColor: colors.border, color: colors.text }]}
             onChangeText={setCmvStatus}
