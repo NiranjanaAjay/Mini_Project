@@ -21,6 +21,7 @@ export default function AddDonor({ navigation }) {
   const [gender, setGender] = useState('');
   const [contact, setContact] = useState('');
   const [cmvStatus, setCmvStatus] = useState('');
+  const [stemcell , setStemCell] = useState('');
   const [hlaA_2, setHlaA_2] = useState('');
   const [hlaA_1, setHlaA_1] = useState('');
   const [hlaB_1, setHlaB_1] = useState('');
@@ -118,6 +119,7 @@ const hlaDQB1Options = [
         body: JSON.stringify({
           Name: name,
           Age: age ? parseInt(age) : null,
+          Age: age ? parseInt(age) : null,
           Gender: gender,
           BloodGroup: bloodGroup,
           Contact: contact,
@@ -132,6 +134,7 @@ const hlaDQB1Options = [
           Hla_drb1_2: hlaDRB1_2,
           Hla_dqb1_1: hlaDQB1_1,
           Hla_dqb1_2: hlaDQB1_2,
+          StemCellSource: stemcell
         }),
       }
     );
@@ -225,6 +228,16 @@ const hlaDQB1Options = [
             placeholderTextColor={colors.textSecondary}
             style={[styles.input, { borderColor: colors.border, color: colors.text }]}
             onChangeText={setCmvStatus}
+          />
+
+          <TextInput
+            placeholder="Stem Cell Source"
+            placeholderTextColor={colors.textSecondary}
+            style={[
+              styles.input,
+              { borderColor: colors.border, color: colors.text },
+            ]}
+            onChangeText={setStemCell}
           />
 
             <Dropdown

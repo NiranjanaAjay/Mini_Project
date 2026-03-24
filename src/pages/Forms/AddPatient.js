@@ -120,9 +120,11 @@ export default function AddPatient({ navigation }) {
         body: JSON.stringify({
           Name: name,
           Age: age ? parseInt(age) : null,
+          Age: age ? parseInt(age) : null,
           Gender: gender,
           BloodGroup: bloodGroup,
           Contact: contact,
+          BodyMass: bodyMass,
           BodyMass: bodyMass,
           RhFactor: rhFactor,
           CMVStatus: cmvStatus,
