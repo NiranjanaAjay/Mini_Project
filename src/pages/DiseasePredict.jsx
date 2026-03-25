@@ -14,6 +14,8 @@ import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import SymptomSelector from '../components/Multiselect';
 import { predictDisease } from '../services/diseaseService';
+import PatientDetailsSection from '../components/PatientDetailsSection';
+import DiseaseResult from '../components/DiseaseResult';
 
 // Supabase configuration
 const API_URL = 'https://uhpinfogzptzsvulhpvr.supabase.co/rest/v1';
@@ -25,122 +27,101 @@ const HEADERS = {
   'Content-Type': 'application/json',
 };
 
+
 const FIELD_META = {
-  Name:       { icon: '👤', label: 'FULL NAME' },
-  Age:        { icon: '🎂', label: 'AGE' },
-  Gender:     { icon: '⚧',  label: 'GENDER' },
-  BloodGroup: { icon: '🩸', label: 'BLOOD GROUP' },
-  Contact:    { icon: '📞', label: 'CONTACT' },
+  Name:       {label: 'FULL NAME' },
+  Age:        {label: 'AGE' },
+  Gender:     { label: 'GENDER' },
+  BloodGroup: {label: 'BLOOD GROUP' },
+  BodyMass:   {label: 'BODY MASS (kg)' },
+  RhFactor:   {label: 'RH FACTOR' },
+  CMVStatus:  {label: 'CMV STATUS' },
+  Contact:    {label: 'CONTACT' },
 };
 
-const DetailCard = ({ icon, label, value, colors, delay }) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(18)).current;
+const HLA_FIELD_META = [
+  { key1: 'Hla_a_1',    key2: 'Hla_a_2',    label: 'HLA-A' },
+  { key1: 'Hla_b_1',    key2: 'Hla_b_2',    label: 'HLA-B' },
+  { key1: 'Hla_c_1',    key2: 'Hla_c_2',    label: 'HLA-C' },
+  { key1: 'Hla_drb1_1', key2: 'Hla_drb1_2', label: 'HLA-DRB1' },
+  { key1: 'Hla_dqb1_1', key2: 'Hla_dqb1_2', label: 'HLA-DQB1' },
+];
 
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, { toValue: 1, duration: 400, delay, useNativeDriver: true }),
-      Animated.timing(slideAnim, { toValue: 0, duration: 350, delay, useNativeDriver: true }),
-    ]).start();
-  }, []);
-
-  return (
-    <Animated.View
-      style={[
-        styles.detailCard,
-        {
-          backgroundColor: colors.card,
-          borderColor: colors.border,
-          opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }],
-        },
-      ]}
-    >
-      <View style={[styles.iconBadge, { backgroundColor: colors.primary + '18' }]}>
-        <Text style={styles.iconText}>{icon}</Text>
-      </View>
-      <View style={styles.detailTextGroup}>
-        <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>{label}</Text>
-        <Text style={[styles.detailValue, { color: colors.text }]}>{value || '—'}</Text>
-      </View>
-    </Animated.View>
-  );
-};
 
 const SectionLabel = ({ text, colors }) => (
   <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>{text}</Text>
 );
 
-const PredictionCard = ({ disease, confidence, colors, delay }) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(20)).current;
+// const PredictionCard = ({ disease, confidence, colors, delay }) => {
+//   const fadeAnim = useRef(new Animated.Value(0)).current;
+//   const slideAnim = useRef(new Animated.Value(20)).current;
 
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, { toValue: 1, duration: 400, delay, useNativeDriver: true }),
-      Animated.timing(slideAnim, { toValue: 0, duration: 350, delay, useNativeDriver: true }),
-    ]).start();
-  }, [delay]);
+//   useEffect(() => {
+//     Animated.parallel([
+//       Animated.timing(fadeAnim, { toValue: 1, duration: 400, delay, useNativeDriver: true }),
+//       Animated.timing(slideAnim, { toValue: 0, duration: 350, delay, useNativeDriver: true }),
+//     ]).start();
+//   }, [delay]);
 
-  const getConfidenceColor = (conf) => {
-    if (conf >= 70) return '#10b981';
-    if (conf >= 50) return '#f59e0b';
-    return '#ef4444';
-  };
+//   const getConfidenceColor = (conf) => {
+//     if (conf >= 70) return '#10b981';
+//     if (conf >= 50) return '#f59e0b';
+//     return '#ef4444';
+//   };
 
-  return (
-    <Animated.View
-      style={[
-        styles.predictionCard,
-        {
-          backgroundColor: colors.card,
-          borderColor: colors.border,
-          opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }],
-        },
-      ]}
-    >
-      <View style={styles.predictionContent}>
-        <View style={styles.predictionInfo}>
-          <Text style={[styles.predictionDisease, { color: colors.text }]}>
-            {disease}
-          </Text>
-          <Text style={[styles.predictionConfidence, { color: colors.textSecondary }]}>
-            Predicted disease
-          </Text>
-        </View>
-        <View
-          style={[
-            styles.confidenceBadge,
-            { backgroundColor: getConfidenceColor(confidence) + '20' },
-          ]}
-        >
-          <Text style={[styles.confidenceText, { color: getConfidenceColor(confidence) }]}>
-            {confidence}%
-          </Text>
-        </View>
-      </View>
-      <View
-        style={[
-          styles.confidenceBar,
-          {
-            backgroundColor: colors.border,
-          },
-        ]}
-      >
-        <View
-          style={[
-            styles.confidenceFill,
-            {
-              width: `${confidence}%`,
-              backgroundColor: getConfidenceColor(confidence),
-            },
-          ]}
-        />
-      </View>
-    </Animated.View>
-  );
-};
+//   return (
+//     <Animated.View
+//       style={[
+//         styles.predictionCard,
+//         {
+//           backgroundColor: colors.card,
+//           borderColor: colors.border,
+//           opacity: fadeAnim,
+//           transform: [{ translateY: slideAnim }],
+//         },
+//       ]}
+//     >
+//       <View style={styles.predictionContent}>
+//         <View style={styles.predictionInfo}>
+//           <Text style={[styles.predictionDisease, { color: colors.text }]}>
+//             {disease}
+//           </Text>
+//           <Text style={[styles.predictionConfidence, { color: colors.textSecondary }]}>
+//             Predicted disease
+//           </Text>
+//         </View>
+//         <View
+//           style={[
+//             styles.confidenceBadge,
+//             { backgroundColor: getConfidenceColor(confidence) + '20' },
+//           ]}
+//         >
+//           <Text style={[styles.confidenceText, { color: getConfidenceColor(confidence) }]}>
+//             {confidence}%
+//           </Text>
+//         </View>
+//       </View>
+//       <View
+//         style={[
+//           styles.confidenceBar,
+//           {
+//             backgroundColor: colors.border,
+//           },
+//         ]}
+//       >
+//         <View
+//           style={[
+//             styles.confidenceFill,
+//             {
+//               width: `${confidence}%`,
+//               backgroundColor: getConfidenceColor(confidence),
+//             },
+//           ]}
+//         />
+//       </View>
+//     </Animated.View>
+//   );
+// };
 
 
 export default function DiseasePredict() {
@@ -161,6 +142,21 @@ export default function DiseasePredict() {
       return "Please select at least one symptom";
     return null;
   };
+
+  const [hasPriorPrediction, setHasPriorPrediction] = useState(false);
+
+useEffect(() => {
+  if (!patient?.Patient_id) return;
+  const check = async () => {
+    const res = await fetch(
+      `${API_URL}/Patient-Disease?Patient_id=eq.${patient.Patient_id}&select=id&limit=1`,
+      { headers: HEADERS }
+    );
+    const data = await res.json();
+    setHasPriorPrediction(data.length > 0);
+  };
+  check();
+}, [patient?.Patient_id]);
 
   const handleSubmit = async () => {
     const error = validateFields();
@@ -245,6 +241,8 @@ export default function DiseasePredict() {
       Alert.alert('Success', `Saved! Predicted disease: ${topPrediction.disease}`, [
         { text: 'OK', onPress: () => navigation.navigate('MainTabs') },
       ]);
+      // inside handleSaveToDatabase, after Alert confirm
+      setHasPriorPrediction(true);
     } catch (err) {
       console.error(err);
       Alert.alert('Error', 'Something went wrong. Please try again.');
@@ -299,35 +297,17 @@ export default function DiseasePredict() {
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-        {/* Section Label */}
-        <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>
-          PERSONAL DETAILS
-        </Text>
-
-        {/* Detail Cards */}
-        <View style={styles.cardsWrap}>
-          {fields.map(f => (
-            <DetailCard
-              key={f.key}
-              icon={f.icon}
-              label={f.label}
-              value={f.value}
-              colors={colors}
-              delay={f.delay}
-            />
-          ))}
-        </View>
-
-        {/* Symptoms */}
-        <SectionLabel text="SELECTED SYMPTOMS" colors={colors} />
-
-        <SymptomSelector
-          selected={selectedSymptoms}
-          setSelected={setSelectedSymptoms}
+        {/* ── Personal Details ─────────────────────────────────────── */}
+        <PatientDetailsSection
+          fields={fields}
+          patient={patient}
+          colors={colors}
+          HLA_FIELD_META={HLA_FIELD_META}
+          styles={styles}
         />
 
         {/* Prediction Results */}
-        {predictions && (
+        {/* {predictions && (
           <View>
             <SectionLabel text="DISEASE PREDICTIONS" colors={colors} />
             <View style={styles.predictionsContainer}>
@@ -360,7 +340,7 @@ export default function DiseasePredict() {
               </View>
             )}
           </View>
-        )}
+        )} */}
 
         {error && (
           <View style={[styles.errorBox, { backgroundColor: '#fee2e2' }]}>
@@ -370,16 +350,48 @@ export default function DiseasePredict() {
         )}
 
         {/* Submit Buttons */}
-        <TouchableOpacity
-          style={[styles.submitBtn, { backgroundColor: loading ? colors.primary + '88' : colors.primary }]}
-          onPress={predictions ? handleSaveToDatabase : handleSubmit}
-          activeOpacity={0.8}
-          disabled={loading}
-        >
-          <Text style={styles.submitText}>
-            {loading ? 'Processing...' : predictions ? 'Save & Continue' : 'Get Predictions'}
-          </Text>
-        </TouchableOpacity>
+{!hasPriorPrediction && (
+  <>
+  {/* Symptoms */}
+        <SectionLabel text="SELECTED SYMPTOMS" colors={colors} />
+
+        <SymptomSelector
+          selected={selectedSymptoms}
+          setSelected={setSelectedSymptoms}
+        />
+
+    {!predictions && (
+      <TouchableOpacity
+        style={[styles.submitBtn, { backgroundColor: loading ? colors.primary + '88' : colors.primary }]}
+        onPress={handleSubmit}
+        activeOpacity={0.8}
+        disabled={loading}
+      >
+        <Text style={styles.submitText}>
+          {loading ? 'Processing...' : 'Get Predictions'}
+        </Text>
+      </TouchableOpacity>
+    )}
+
+    {/* {predictions?.predictions?.length > 0 && (
+      <TouchableOpacity
+        style={[styles.submitBtn, { backgroundColor: loading ? colors.primary + '88' : colors.primary }]}
+        onPress={handleSaveToDatabase}
+        activeOpacity={0.8}
+        disabled={loading}
+      >
+        <Text style={styles.submitText}>
+          {loading ? 'Saving...' : 'Save & Continue'}
+        </Text>
+      </TouchableOpacity>
+    )} */}
+  </>
+)}
+
+        <DiseaseResult
+          patientId={patient.Patient_id}
+          refreshKey={predictions}   // re-fetches whenever a new prediction is saved
+        />
 
       </ScrollView>
     </SafeAreaView>
@@ -439,8 +451,6 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth, borderRadius: 16,
     padding: 14, gap: 14,
   },
-  iconBadge: { width: 46, height: 46, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
-  iconText: { fontSize: 21 },
   detailTextGroup: { flex: 1 },
   detailLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 1, marginBottom: 4 },
   detailValue: { fontSize: 16, fontWeight: '600' },
@@ -476,12 +486,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     gap: 12,
   },
-  predictionCard: {
-    borderWidth: 1,
-    borderRadius: 16,
-    padding: 16,
-    gap: 12,
-  },
+  // predictionCard: {
+  //   borderWidth: 1,
+  //   borderRadius: 16,
+  //   padding: 16,
+  //   gap: 12,
+  // },
   predictionContent: {
     flexDirection: 'row',
     alignItems: 'center',

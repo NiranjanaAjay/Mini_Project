@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppTheme } from '../../src/Theme/ThemeContext';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import DonorTabs from '../components/DonorTabs.jsx';
+import DiseaseResult from '../components/DiseaseResult.jsx';
 
 const API_URL = 'https://uhpinfogzptzsvulhpvr.supabase.co/rest/v1';
 const API_KEY =
@@ -74,6 +75,7 @@ export default function PatientDetail() {
   const route = useRoute();
   const { patient } = route.params;
    const [refreshing, setRefreshing] = useState(false);
+   const [predictions, setPredictions] = useState(null);
   
     const onRefresh = async () => {
       setRefreshing(true);
@@ -220,6 +222,11 @@ export default function PatientDetail() {
           <DetailCard label="HLA-DRB1" value={`${patient.Hla_drb1_1 || '-'} / ${patient.Hla_drb1_2 || '-'}`} colors={colors} />
           <DetailCard label="HLA-DQB1" value={`${patient.Hla_dqb1_1 || '-'} / ${patient.Hla_dqb1_2 || '-'}`} colors={colors} />
         </View>
+
+        <DiseaseResult
+                  patientId={patient.Patient_id}
+                  //refreshKey={predictions}   // re-fetches whenever a new prediction is saved
+                />
 
  {!loadingDonors && donors.length > 0 && (
     <>

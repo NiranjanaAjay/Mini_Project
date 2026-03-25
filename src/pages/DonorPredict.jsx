@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { Dropdown } from 'react-native-element-dropdown';
 import DonorTabs from '../components/DonorTabs.jsx';
+import PatientDetailsSection from '../components/PatientDetailsSection.jsx';
 
 const API_URL = 'https://uhpinfogzptzsvulhpvr.supabase.co/rest/v1';
 const API_KEY =
@@ -68,62 +69,9 @@ const POST_RELAPSE_OPTIONS = [
   { label: 'No',  value: 'no' },
 ];
 
-// ─── Detail Card ────────────────────────────────────────────────────────────
-const DetailCard = ({ label, value, colors, delay }) => {
-  const fadeAnim  = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(18)).current;
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim,  { toValue: 1, duration: 400, delay, useNativeDriver: true }),
-      Animated.timing(slideAnim, { toValue: 0, duration: 350, delay, useNativeDriver: true }),
-    ]).start();
-  }, []);
-
-  return (
-    <Animated.View
-      style={[
-        styles.detailCard,
-        {
-          backgroundColor: colors.card,
-          borderColor: colors.border,
-          opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }],
-        },
-      ]}
-    >
-      <View style={styles.detailTextGroup}>
-        <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>{label}</Text>
-        <Text style={[styles.detailValue, { color: colors.text }]}>{value || '—'}</Text>
-      </View>
-    </Animated.View>
-  );
-};
-
-// ─── HLA Row ─────────────────────────────────────────────────────────────────
-const HlaRow = ({ label, val1, val2, colors }) => (
-  <View style={[styles.hlaRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
-    <Text style={[styles.hlaLabel, { color: colors.textSecondary }]}>{label}</Text>
-    <View style={styles.hlaValues}>
-      <View style={[styles.hlaPill, { backgroundColor: colors.primary + '14', borderColor: colors.primary + '30' }]}>
-        <Text style={[styles.hlaPillText, { color: colors.text }]}>{val1 || '—'}</Text>
-      </View>
-      <View style={[styles.hlaSep, { backgroundColor: colors.border }]} />
-      <View style={[styles.hlaPill, { backgroundColor: colors.primary + '14', borderColor: colors.primary + '30' }]}>
-        <Text style={[styles.hlaPillText, { color: colors.text }]}>{val2 || '—'}</Text>
-      </View>
-    </View>
-  </View>
-);
-
 // ─── Section Label ───────────────────────────────────────────────────────────
 const SectionLabel = ({ text, colors }) => (
   <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>{text}</Text>
-);
-
-// ─── Divider ─────────────────────────────────────────────────────────────────
-const Divider = ({ colors }) => (
-  <View style={[styles.divider, { backgroundColor: colors.border }]} />
 );
 
 // ─── Main Screen ─────────────────────────────────────────────────────────────
@@ -294,34 +242,13 @@ export default function DonorPredict() {
         showsVerticalScrollIndicator={false}
       >
         {/* ── Personal Details ─────────────────────────────────────── */}
-        <SectionLabel text="PERSONAL DETAILS" colors={colors} />
-        <View style={styles.cardsWrap}>
-          {fields.map(f => (
-            <DetailCard
-              key={f.key}
-              label={f.label}
-              value={f.value}
-              colors={colors}
-              delay={f.delay}
-            />
-          ))}
-        </View>
-
-        {/* ── HLA Typing ───────────────────────────────────────────── */}
-        <SectionLabel text="HLA TYPING" colors={colors} />
-        <View style={styles.cardsWrap}>
-          {HLA_FIELD_META.map(({ key1, key2, label }) => (
-            <HlaRow
-              key={label}
-              label={label}
-              val1={patient[key1]}
-              val2={patient[key2]}
-              colors={colors}
-            />
-          ))}
-        </View>
-
-        <Divider colors={colors} />
+        <PatientDetailsSection
+          fields={fields}
+          patient={patient}
+          colors={colors}
+          HLA_FIELD_META={HLA_FIELD_META}
+          styles={styles}
+        />
 
         {/* ── Clinical Assessment ──────────────────────────────────── */}
         <SectionLabel text="CLINICAL ASSESSMENT" colors={colors} />
