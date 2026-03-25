@@ -14,6 +14,7 @@ import { useAppTheme } from '../../src/Theme/ThemeContext';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { Dropdown } from 'react-native-element-dropdown';
+import DonorTabs from '../components/DonorTabs.jsx';
 
 const API_URL = 'https://uhpinfogzptzsvulhpvr.supabase.co/rest/v1';
 const API_KEY =
@@ -137,8 +138,34 @@ export default function DonorPredict() {
   const [riskGroup,    setRiskGroup]    = useState('');
   const [postRelapse,  setPostRelapse]  = useState('');
   const [loading,      setLoading]      = useState(false);
+  const [donors, setDonors] = useState([]);
+  const [loadingDonors, setLoadingDonors] = useState(true);
+  
+  
+  useEffect(() => {
+    const fetchDonors = async () => {
+      try {
+        const res = await fetch(
+          `${API_URL}/Patient-Donor?Patient_id=eq.${patient.Patient_id}`,
+          {
+            headers: HEADERS,
+          }
+        );
+  
+        const data = await res.json();
+        console.log("DATAAAAAAA: ",data)
+        setDonors(data || []);
+      } catch (err) {
+        console.error('Error fetching donors:', err);
+      } finally {
+        setLoadingDonors(false);
+      }
+    };
+  
+    fetchDonors();
+  }, []);
 
-  const BACKEND_URL = "http://192.168.1.19:8000";
+  const BACKEND_URL = "http://192.168.66.33:8000";
 
   useEffect(() => {
   setDiseaseType(patient.DiseaseType || '');
@@ -383,8 +410,17 @@ export default function DonorPredict() {
 
         </View>
 
+        {!loadingDonors && donors.length > 0 && (
+            <>
+              <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>
+                MATCHED DONORS
+              </Text>
+              <DonorTabs donors={donors} colors={colors} />
+            </>
+          )}
+
         {/* Submit */}
-        <TouchableOpacity
+        {!loadingDonors && donors.length === 0  && <TouchableOpacity
           style={[
             styles.submitBtn,
             { backgroundColor: loading ? colors.primary + '88' : colors.primary },
@@ -394,9 +430,9 @@ export default function DonorPredict() {
           disabled={loading}
         >
           <Text style={styles.submitText}>
-            {loading ? 'Saving...' : 'Save & Continue'}
+            {loading ? 'Saving...' : 'Predict Donor'}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity>}
 
       </ScrollView>
     </SafeAreaView>

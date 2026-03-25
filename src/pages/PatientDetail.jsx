@@ -85,28 +85,28 @@ export default function PatientDetail() {
   const [loadingDonors, setLoadingDonors] = useState(true);
 
 
-useEffect(() => {
-  const fetchDonors = async () => {
-    try {
-      const res = await fetch(
-        `${API_URL}/Patient-Donor?Patient_id=eq.${patient.Patient_id}`,
-        {
-          headers: HEADERS,
-        }
-      );
+  useEffect(() => {
+    const fetchDonors = async () => {
+      try {
+        const res = await fetch(
+          `${API_URL}/Patient-Donor?Patient_id=eq.${patient.Patient_id}`,
+          {
+            headers: HEADERS,
+          }
+        );
 
-      const data = await res.json();
-      console.log("DATAAAAAAA: ",data)
-      setDonors(data || []);
-    } catch (err) {
-      console.error('Error fetching donors:', err);
-    } finally {
-      setLoadingDonors(false);
-    }
-  };
+        const data = await res.json();
+        console.log("DATAAAAAAA: ",data)
+        setDonors(data || []);
+      } catch (err) {
+        console.error('Error fetching donors:', err);
+      } finally {
+        setLoadingDonors(false);
+      }
+    };
 
-  fetchDonors();
-}, []);
+    fetchDonors();
+  }, []);
 
 
   const headerFade = useRef(new Animated.Value(0)).current;
@@ -222,13 +222,13 @@ useEffect(() => {
         </View>
 
  {!loadingDonors && donors.length > 0 && (
-  <>
-    <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>
-      MATCHED DONORS
-    </Text>
-    <DonorTabs donors={donors} colors={colors} />
-  </>
-)}
+    <>
+      <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>
+        MATCHED DONORS
+      </Text>
+      <DonorTabs donors={donors} colors={colors} />
+    </>
+  )}
       </ScrollView>
     </SafeAreaView>
   );
