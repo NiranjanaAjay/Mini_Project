@@ -230,7 +230,7 @@ export default function DiseasePredict() {
           Name: patient.Name,
           Patient_id: patient.Patient_id,
           Symptoms: selectedSymptoms,
-          Predicted_Disease: topPrediction.disease,
+          Predicted_disease: topPrediction.disease,
           Confidence: topPrediction.confidence,
         }),
       });

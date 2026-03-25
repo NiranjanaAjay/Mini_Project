@@ -10,7 +10,7 @@ const BACKEND_CONFIG = {
   // For iOS Simulator
   IOS_SIMULATOR_URL: 'http://localhost:5000',
   // For physical device on same network (update with your actual backend IP)
-  PHYSICAL_DEVICE_URL: 'http://192.168.1.48:5000', // Change to your backend server IP
+  PHYSICAL_DEVICE_URL: 'http://192.168.1.19:8000', // Change to your backend server IP
   // For production/cloud deployment
   PRODUCTION_URL: 'https://your-backend-url.com',
 };
@@ -18,7 +18,7 @@ const BACKEND_CONFIG = {
 // Select the appropriate URL based on your setup
 // For development: use ANDROID_EMULATOR_URL or IOS_SIMULATOR_URL
 // For testing on physical device: use PHYSICAL_DEVICE_URL
-const BACKEND_URL = BACKEND_CONFIG.ANDROID_EMULATOR_URL; // Change this as needed
+const BACKEND_URL = BACKEND_CONFIG.PHYSICAL_DEVICE_URL; // Change this as needed
 
 /**
  * Fetch available symptoms from backend
@@ -55,7 +55,7 @@ export const predictDisease = async (symptoms) => {
       throw new Error('At least one symptom must be selected');
     }
 
-    const response = await fetch(`${BACKEND_URL}/predict`, {
+    const response = await fetch(`${BACKEND_URL}/predict-disease`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
