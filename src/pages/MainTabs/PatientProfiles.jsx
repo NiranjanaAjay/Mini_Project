@@ -148,7 +148,9 @@ export default function PatientProfiles({ navigation }) {
         <View style={styles.infoItem}>
           <Icon name="chart-line" size={16} color={colors.textSecondary} />
           <Text style={[styles.infoText, { color: colors.textSecondary }]}>
-            Outcome: {patient.OutcomeVariable || 'Pending'}
+            {patient.donorMatched 
+              ? 'Donor Matched' 
+              : (patient.OutcomeVariable || 'Pending')}
           </Text>
         </View>
       </View>

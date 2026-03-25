@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import {
   View,
   Text,
@@ -19,6 +19,8 @@ export default function Home({ navigation }) {
   const [showAddDataModal, setShowAddDataModal] = useState(false);
   const [PatientNameModal, setPatientNameModal] = useState(false);
   const [DonorMatchModal, setDonorMatchModal] = useState(false);
+  const [totalPatients, setTotalPatients] = useState(0);
+  const [activeDonors, setActiveDonors] = useState(0);
 
   const StatCard = ({ icon, title, value, color }) => (
     <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -49,6 +51,55 @@ export default function Home({ navigation }) {
     </TouchableOpacity>
   );
 
+  useEffect(() => {
+  fetchStats();
+}, []);
+
+  const fetchStats = async () => {
+  try {
+    // Patients count
+    const patientsRes = await fetch(
+      'https://uhpinfogzptzsvulhpvr.supabase.co/rest/v1/Patient?select=*',
+      {
+        headers: {
+          apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVocGluZm9nenB0enN2dWxocHZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyMjQyNjEsImV4cCI6MjA2OTgwMDI2MX0.PrVCuwG314G4x3YW-b3p1-xHDLjcLyLbxvh4fMt_UvE',
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVocGluZm9nenB0enN2dWxocHZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyMjQyNjEsImV4cCI6MjA2OTgwMDI2MX0.PrVCuwG314G4x3YW-b3p1-xHDLjcLyLbxvh4fMt_UvE',
+          'Content-Type': 'application/json',
+          Prefer: 'count=exact',
+        },
+      }
+    );
+
+    const patientCountHeader = patientsRes.headers.get('content-range');
+    const totalPatientsCount = patientCountHeader
+      ? parseInt(patientCountHeader.split('/')[1])
+      : 0;
+
+    // Matched donors count (PatientDonor table)
+    const donorsRes = await fetch(
+      'https://uhpinfogzptzsvulhpvr.supabase.co/rest/v1/Patient-Donor?select=*',
+      {
+        headers: {
+          apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVocGluZm9nenB0enN2dWxocHZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyMjQyNjEsImV4cCI6MjA2OTgwMDI2MX0.PrVCuwG314G4x3YW-b3p1-xHDLjcLyLbxvh4fMt_UvE',
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVocGluZm9nenB0enN2dWxocHZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyMjQyNjEsImV4cCI6MjA2OTgwMDI2MX0.PrVCuwG314G4x3YW-b3p1-xHDLjcLyLbxvh4fMt_UvE',
+          'Content-Type': 'application/json',
+          Prefer: 'count=exact',
+        },
+      }
+    );
+
+    const donorCountHeader = donorsRes.headers.get('content-range');
+    const totalDonorsCount = donorCountHeader
+      ? parseInt(donorCountHeader.split('/')[1])
+      : 0;
+
+    setTotalPatients(totalPatientsCount);
+    setActiveDonors(totalDonorsCount);
+  } catch (error) {
+    console.log('Error fetching stats:', error);
+  }
+};
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
@@ -62,8 +113,19 @@ export default function Home({ navigation }) {
 
         {/* Stats */}
         <View style={styles.statsContainer}>
-          <StatCard icon="account-multiple" title="Total Patients" value="248" color={colors.primary} />
-          <StatCard icon="heart-pulse" title="Active Donors" value="156" color={colors.success} />
+          <StatCard 
+            icon="account-multiple" 
+            title="Total Patients" 
+            value={totalPatients} 
+            color={colors.primary} 
+          />
+
+          <StatCard 
+            icon="heart-pulse" 
+            title="Matched Donors" 
+            value={activeDonors} 
+            color={colors.success} 
+          />
         </View>
 
         {/* Quick Actions */}
