@@ -5,14 +5,10 @@
 
 // Configuration - Update this based on your backend URL
 const BACKEND_CONFIG = {
-  // For Android Emulator (maps to localhost on host machine)
-  ANDROID_EMULATOR_URL: 'http://10.0.2.2:5000',
-  // For iOS Simulator
-  IOS_SIMULATOR_URL: 'http://localhost:5000',
-  // For physical device on same network (update with your actual backend IP)
-  PHYSICAL_DEVICE_URL: 'http://192.168.1.19:8000', // Change to your backend server IP
-  // For production/cloud deployment
-  PRODUCTION_URL: 'https://your-backend-url.com',
+  ANDROID_EMULATOR_URL: 'http://192.168.66.33:8000',
+  IOS_SIMULATOR_URL: 'http://192.168.66.33:8000',
+  PHYSICAL_DEVICE_URL: 'http://192.168.66.33:8000',
+  PRODUCTION_URL: 'http://192.168.66.33:8000',
 };
 
 // Select the appropriate URL based on your setup

@@ -36,7 +36,8 @@ function confidenceColor(pct, colors) {
 
 // ─── Animated confidence ring ─────────────────────────────────────────────────
 const ConfidenceRing = ({ confidence, colors }) => {
-  const pct = parseFloat(confidence) *25 || 0;
+  const pct1 = parseFloat(confidence)  || 0;
+  const pct= Math.max(0, Math.min(100, Math.round(pct1 * 5)))
   const anim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -159,7 +160,9 @@ const ResultCard = ({ record, colors, index }) => {
     ? JSON.parse(record.Symptoms)
     : [];
 
-  const pct = parseFloat(record.Confidence) || 0;
+  //const pct = parseFloat(record.Confidence) || 0;
+  const pct1 = parseFloat(record.Confidence)  || 0;
+  const pct= Math.max(0, Math.min(100, Math.round(pct1 * 5)))
   const ringColor = confidenceColor(pct, colors);
   const date = record.created_at
     ? new Date(record.created_at).toLocaleDateString('en-GB', {
@@ -202,7 +205,7 @@ const ResultCard = ({ record, colors, index }) => {
         {/* Compact confidence badge */}
         <View style={[styles.confBadge, { backgroundColor: ringColor + '20' }]}>
           <Text style={[styles.confBadgeText, { color: ringColor }]}>
-            {Math.round(pct*25)}%
+            {Math.round(pct)}%
           </Text>
         </View>
 

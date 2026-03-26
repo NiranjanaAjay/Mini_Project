@@ -180,13 +180,14 @@ useEffect(() => {
         const topPrediction = predictionResult.predictions[0];
         
         // Show warning if confidence is low
-        if (predictionResult.low_confidence) {
+        // if (predictionResult.low_confidence) {
           Alert.alert(
-            'Low Confidence',
-            `The model confidence is below 30%. Top prediction: ${topPrediction.disease} (${topPrediction.confidence}%)`,
-            [{ text: 'OK' }]
+            // 'Low Confidence',
+            // `The model confidence is below 30%. Top prediction: ${topPrediction.disease} (${topPrediction.confidence}%)`,
+            // [{ text: 'OK' }]
+            'Saved selected symptoms successfully'
           );
-        }
+        // }
 
         // Show unrecognized symptoms warning if any
         if (predictionResult.unrecognised_symptoms && predictionResult.unrecognised_symptoms.length > 0) {
@@ -368,12 +369,12 @@ useEffect(() => {
         disabled={loading}
       >
         <Text style={styles.submitText}>
-          {loading ? 'Processing...' : 'Get Predictions'}
+          {loading ? 'Processing...' : 'Save Symptoms'}
         </Text>
       </TouchableOpacity>
     )}
 
-    {/* {predictions?.predictions?.length > 0 && (
+    {predictions?.predictions?.length > 0 && (
       <TouchableOpacity
         style={[styles.submitBtn, { backgroundColor: loading ? colors.primary + '88' : colors.primary }]}
         onPress={handleSaveToDatabase}
@@ -381,10 +382,10 @@ useEffect(() => {
         disabled={loading}
       >
         <Text style={styles.submitText}>
-          {loading ? 'Saving...' : 'Save & Continue'}
+          {loading ? 'Saving...' : 'Get Predictions'}
         </Text>
       </TouchableOpacity>
-    )} */}
+    )}
   </>
 )}
 
